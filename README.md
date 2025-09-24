@@ -11,5 +11,13 @@ The long-term goal is to:
 1. Assist **coaching** by providing insights into player performance compared with historical legends.
 2. Support **healthcare** by detecting fatigue or risk indicators from match movement patterns.
 
+## Roadmap
+- [ ] Collect sample match data
+- [ ] Implement player detection & tracking
+- [ ] Extract player features (position, speed, actions)
+- [ ] Train baseline evaluation model
+- [ ] Build demo app with Streamlit
 
-## Repository structure
+
+## License
+MIT © Dhuha
