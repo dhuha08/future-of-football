@@ -1,1 +1,18 @@
-jkdsj
+*.mp4
+*.avi
+*.mov
+# Ignore big video files
+
+*.csv
+*.json
+# Ignore data dumps
+
+*.ipynb_checkpoints/
+# Ignore Jupyter notebook checkpoints
+
+__pycache__/
+*.pyc
+# Ignore Python cache
+
+.env 
+# Ignore environmental files (API keys, configs)
