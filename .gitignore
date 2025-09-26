@@ -14,5 +14,6 @@ __pycache__/
 *.pyc
 # Ignore Python cache
 
+/data/
 .env 
 # Ignore environmental files (API keys, configs)
