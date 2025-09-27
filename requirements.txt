@@ -3,3 +3,4 @@ numpy>=1.19
 matplotlib>=3.0
 torch
 ultralytics
+filterpy>=0.1.4
