@@ -16,5 +16,5 @@ __pycache__/
 
 /data/
 .env 
-.venv/
+venv/
 # Ignore environmental files (API keys, configs)
