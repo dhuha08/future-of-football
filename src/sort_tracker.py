@@ -2,7 +2,7 @@ import numpy as np
 from filterpy.kalman import KalmanFilter
 from scipy.optimize import linear_sum_assignment
 
-# Helper Functions
+
 def iou(bb_test, bb_gt):
     """
     Compute IoU between two boxes.
@@ -109,5 +109,4 @@ class SortTracker:
         # keep alive only active tracks
         self.tracks = [t for t in self.tracks if t.time_since_update <= self.max_age]
         return np.array(outs)
-
 

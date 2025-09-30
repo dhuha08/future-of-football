@@ -1,6 +1,6 @@
 """
 Standalone video -> detections -> tracker -> CSV of positions & speeds
-
+With live display and early quit while csv saving every 50 frames.
 """
 
 import os
@@ -8,13 +8,12 @@ import cv2
 import numpy as np
 import pandas as pd
 import time
-
-# Use sys.path trick to import sort_tracker if necessary
 import sys
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from sort_tracker import SortTracker
 
-# Try ultralytics YOLOv8 first, fallback to YOLOv5
+# YOLO detection backend
 try:
     from ultralytics import YOLO
     DET_BACKEND = 'yolov8'
@@ -58,7 +57,6 @@ def main(video_path, out_csv, conf_thresh=0.3):
         frame_idx += 1
         t = frame_idx / fps
 
-        # run detector
         dets = []
         try:
             res = detector(frame)
@@ -75,7 +73,6 @@ def main(video_path, out_csv, conf_thresh=0.3):
         except Exception as e:
             print(f'Detector error at frame {frame_idx}: {e}')
 
-        # update tracker
         tracks = tracker.update(np.array(dets))
 
         for tr in tracks:
@@ -90,12 +87,30 @@ def main(video_path, out_csv, conf_thresh=0.3):
                          'h': float(h),
                          'conf': float(conf)})
 
+            # draw boxes on frame for live display
+            x1_draw = int(cx - w/2)
+            y1_draw = int(cy - h/2)
+            x2_draw = int(cx + w/2)
+            y2_draw = int(cy + h/2)
+            cv2.rectangle(frame, (x1_draw, y1_draw), (x2_draw, y2_draw), (0,255,0), 2)
+            cv2.putText(frame, f'ID:{int(tid)}', (x1_draw, max(0,y1_draw-6)),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1)
+
+        # show live frame
+        cv2.imshow('Detection', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("Early stop pressed")
+            break
+
+        # save partial CSV every 50 frames
+        if frame_idx % 50 == 0:
+            pd.DataFrame(rows).to_csv(out_csv, index=False)
+
         if frame_idx % 250 == 0:
             print(f'Processed {frame_idx} frames...')
 
-    df = pd.DataFrame(rows)
-
     # compute speeds per track (pixels/sec)
+    df = pd.DataFrame(rows)
     df = df.sort_values(['track_id','frame']).reset_index(drop=True)
     df['speed_px_per_s'] = 0.0
     for tid, g in df.groupby('track_id'):
@@ -113,7 +128,9 @@ def main(video_path, out_csv, conf_thresh=0.3):
 
     os.makedirs(os.path.dirname(out_csv) or '.', exist_ok=True)
     df.to_csv(out_csv, index=False)
-    print('Saved positions CSV ->', out_csv)
+    print('Saved final positions CSV ->', out_csv)
+    cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     import argparse
