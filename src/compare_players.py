@@ -11,6 +11,33 @@ import os
 MATCH_CSV = "data/positions/match1_positions_metrics.csv"
 LEGENDS_CSV = "data/positions/legends_benchmark.csv"
 OUTPUT_CSV = "data/positions/match1_vs_legends.csv"
+OUTPUT_FEEDBACK = "data/positions/match1_feedback.txt"
+def generate_feedback(row, metrics_cols):
+    legend = row['legend']
+    score = row['score']
+
+    feedback = []
+
+    # Overall summary
+    if score > 0.85:
+        feedback.append(f"Excellent — your style matches {legend} very closely ({score:.2f} similarity).")
+    elif score > 0.65:
+        feedback.append(f"Good — your movement is similar to {legend} ({score:.2f}), with room to refine a few areas.")
+    else:
+        feedback.append(f"You are somewhat far from {legend}'s movement profile ({score:.2f}).")
+
+    # Metric-specific messages
+    if 'distance_px' in metrics_cols:
+        feedback.append("- You could improve overall movement intensity (distance covered).")
+
+    if 'avg_speed_px_s' in metrics_cols:
+        feedback.append("- Your average speed suggests you could maintain a higher tempo.")
+
+    if 'max_speed_px_s' in metrics_cols:
+        feedback.append("- Your max speed could be higher to resemble elite sprint patterns.")
+
+    return "\n".join(feedback)
+
 
 # LOAD DATA
 players = pd.read_csv(MATCH_CSV)

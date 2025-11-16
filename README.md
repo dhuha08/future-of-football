@@ -16,8 +16,8 @@ The long-term goal is to:
 - [ ] Implement player detection & tracking
 - [ ] Extract player features (position, speed, actions)
 - [ ] Train baseline evaluation model
-- [ ] Build demo app with Streamlit
 
+feedback strings currently loop through all players; a single player can be selected by filtering track_id in compare_players.py
 
 ## License
 MIT © Dhuha
