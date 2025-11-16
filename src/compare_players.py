@@ -53,3 +53,18 @@ closest.to_csv(OUTPUT_CSV, index=False)
 
 print(f"Comparison table saved -> {OUTPUT_CSV}")
 print(closest)
+
+# GENERATE FEEDBACK FOR EACH PLAYER
+
+feedback_strings = []
+
+for _, row in closest.iterrows():
+    text = generate_feedback(row, metrics_cols)
+    feedback_strings.append(f"=== Player {row['track_id']} ===\n{text}\n")
+
+# Save feedback as text file
+with open(OUTPUT_FEEDBACK, "w") as f:
+    f.write("\n".join(feedback_strings))
+
+print(f"\nFeedback saved -> {OUTPUT_FEEDBACK}")
+print("\n".join(feedback_strings))
